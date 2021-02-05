@@ -22,7 +22,12 @@ class ProgramController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $search = $form->getData()['search'];
-            $programs = $programRepository->findByTitle($search);
+
+            if (isset($search)) {
+                $programs = $programRepository->findByTitle($search);
+            } else {
+                $programs = $programRepository->findAll();
+            }
         } else {
             $programs = $programRepository->findAll();
         }

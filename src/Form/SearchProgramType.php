@@ -14,6 +14,7 @@ class SearchProgramType extends AbstractType
         $builder
             ->add('search', SearchType::class, [
                 'label' => 'Rechercher',
+                'required'   => false,
             ]);
     }
 

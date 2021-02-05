@@ -4,7 +4,7 @@
 {% endblock %}
 
 {% block body %}
-	<h1>Program index</h1>
+	<h1>Les Films</h1>
 
 	{{ form_start(formSearch) }}
 	<div class="my-custom-class-for-errors">
@@ -19,35 +19,24 @@
 	</div>
 	{{ form_end(formSearch) }}
 
-	<table class="table">
-		<thead>
-			<tr>
-				<th>Id</th>
-				<th>Title</th>
-				<th>Summary</th>
-				<th>Poster</th>
-				<th>actions</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for program in programs %}
-				<tr>
-					<td>{{ program.id }}</td>
-					<td>{{ program.title }}</td>
-					<td>{{ program.summary }}</td>
-					<td>{{ program.poster }}</td>
-					<td>
+	<div class="row">
+		{% for program in programs %}
+			<div class="col-md-3">
+				<div class="card text-center">
+					<img src="{{ program.poster }}" class="card-img" alt="{{ program.title }}"/>
+					<div class="card-img-overlay">
+						<h5 class="card-title">{{ program.title }}</h5>
 						<a href="{{ path('program_show', {'id': program.id}) }}">show</a>
 						<a href="{{ path('program_edit', {'id': program.id}) }}">edit</a>
-					</td>
-				</tr>
-			{% else %}
-				<tr>
-					<td colspan="5">no records found</td>
-				</tr>
-			{% endfor %}
-		</tbody>
-	</table>
+					</div>
+				</div>
+			</div>
+		{% else %}
+			<div class="col">
+				<p>Aucun film</p>
+			</div>
+		{% endfor %}
+	</div>
 
-	<a href="{{ path('program_new') }}">Create new</a>
+	<a class="btn btn-primary" href="{{ path('program_new') }}">Create new</a>
 {% endblock %}
