@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Program;
 use App\Form\ProgramType;
+use App\Form\SearchProgramType;
 use App\Repository\ProgramRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,11 +14,22 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/program')]
 class ProgramController extends AbstractController
 {
-    #[Route('/', name: 'program_index', methods: ['GET'])]
-    public function index(ProgramRepository $programRepository): Response
+    #[Route('/', name: 'program_index', methods: ['GET', 'POST'])]
+    public function index(Request $request, ProgramRepository $programRepository): Response
     {
+        $form = $this->createForm(SearchProgramType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $search = $form->getData()['search'];
+            $programs = $programRepository->findByTitle($search);
+        } else {
+            $programs = $programRepository->findAll();
+        }
+
         return $this->render('program/index.html.twig', [
-            'programs' => $programRepository->findAll(),
+            'programs' => $programs,
+            'formSearch' => $form->createView(),
         ]);
     }
 
@@ -71,7 +83,7 @@ class ProgramController extends AbstractController
     #[Route('/{id}', name: 'program_delete', methods: ['DELETE'])]
     public function delete(Request $request, Program $program): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$program->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $program->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($program);
             $entityManager->flush();
